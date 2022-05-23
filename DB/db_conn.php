@@ -29,13 +29,13 @@ class Essecuelle{
         if(isset($this->connection))
         {
             try{
-                $esecuzioneQuery = $this->connection->prepare(query: $query)->execute($params);
+                $esecuzioneQuery = $this->connection->prepare($query);
+                $esecuzioneQuery->execute($params);
                 $risultato = $esecuzioneQuery->fetch(PDO::FETCH_ASSOC);
                 return $risultato;
             }catch (Exception $e){
                 return 0;
             }
-
         }
         else
             echo 'connesione scaduta';
