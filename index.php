@@ -50,7 +50,8 @@ if(isset($_POST['login'])){
 require 'db_conn.php';
 $conn = new Essecuelle();
 
-$conn->eseguiQuery("INSERT INTO utenti (username, password, ruolo) VALUES ('prova2', 'prova2', 0)")
+$a = $conn->eseguiQuery("INSERT INTO utenti (username, password, ruolo) VALUES ('prova2', 'prova2', 0)");
+echo $a;
 
 
 ?>
