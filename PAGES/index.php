@@ -50,6 +50,8 @@ if(isset($_POST['login'])){
 require '../DB/db_conn.php';
 $conn = new Essecuelle();
 
+$conn->eseguiQueryNoRis("INSERT INTO utenti (username, password, ruolo) VALUES ('piva', 'piva', 0);");
+
 ?>
 
 
