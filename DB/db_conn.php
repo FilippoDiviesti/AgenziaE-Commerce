@@ -25,11 +25,11 @@ class Essecuelle{
     }
 
 
-    public function eseguiQuery(string $query){
+    public function eseguiQuery(string $query, $params){
         if(isset($this->connection))
         {
             try{
-                $esecuzioneQuery = $this->connection->prepare(query: $query)->execute();
+                $esecuzioneQuery = $this->connection->prepare(query: $query)->execute($params);
                 $risultato = $esecuzioneQuery->fetch(PDO::FETCH_ASSOC);
                 return $risultato;
             }catch (Exception $e){
