@@ -42,10 +42,14 @@ class Essecuelle{
     }
 
 
-    public function registrazione(string $email, string $password){
+    public function eseguiQueryNoRis(string $query, $params){
         if(isset($this->connection)){
-        $esecuzioneQuery = $this->connection->prepare("INSERT INTO `utenti`(`email`, `password`, `ruolo`) VALUES (:email, :password, 1)");
-        return $esecuzioneQuery->execute([':email' => $email, ':password' => $password]);
+            try{
+                $this->connection->prepare(query: $query)->execute($params);
+                return 1;
+            }catch (Exception $e){
+                return 0;
+            }
         }
         else
             echo 'connesione scaduta';
