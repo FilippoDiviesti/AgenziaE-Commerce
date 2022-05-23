@@ -1,5 +1,5 @@
 <?php
-/*
+
 require 'db_conn.php';
 $conn = new Essecuelle();
 if(!isset($_SESSION['loginstate'])){
@@ -8,7 +8,7 @@ if(!isset($_SESSION['loginstate'])){
 }
 if(isset($_POST['login'])){
     if((isset($_POST['username']) && !empty($_POST['username']) && isset($_POST['password']) && !empty($_POST['password']))){
-        $risultato = $conn->login($_POST['username'],$_POST['password']);
+        $risultato = $conn->eseguiQuery("SELECT compito FROM utenti WHERE username = :user AND password = :pass;", ['user' => $_POST['username'], 'pass' => $_POST['password']]);
         if($risultato != 0){
             $_SESSION['loginstate'] = 1;
             $pagina = "";
@@ -44,14 +44,6 @@ if(isset($_POST['login'])){
         }
     }
 }
-*/
-
-
-require '../DB/db_conn.php';
-$conn = new Essecuelle();
-
-$conn->eseguiQueryNoRis("INSERT INTO utenti (username, password, ruolo) VALUES (:user, :pass, 0);", ['user'=>'piva2', 'pass'=>'piva2']);
-
 ?>
 
 
