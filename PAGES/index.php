@@ -47,7 +47,7 @@ if(isset($_POST['login'])){
 */
 
 
-require 'db_conn.php';
+require '../DB/db_conn.php';
 $conn = new Essecuelle();
 
 ?>
