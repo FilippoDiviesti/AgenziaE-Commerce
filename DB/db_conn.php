@@ -42,10 +42,10 @@ class Essecuelle{
     }
 
 
-    public function eseguiQueryNoRis(string $query){
+    public function eseguiQueryNoRis(string $query, $params){
         if(isset($this->connection)){
             try{
-                $this->connection->prepare(query: $query)->execute();
+                $this->connection->prepare(query: $query)->execute($params);
                 return 1;
             }catch (Exception $e){
                 return 0;
