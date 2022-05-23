@@ -1,4 +1,5 @@
 <?php
+/*
 require 'db_conn.php';
 $conn = new Essecuelle();
 if(!isset($_SESSION['loginstate'])){
@@ -43,6 +44,15 @@ if(isset($_POST['login'])){
         }
     }
 }
+*/
+
+
+require 'db_conn.php';
+$conn = new Essecuelle();
+
+$conn->eseguiQuery("INSERT INTO utenti (username, password, ruolo) VALUES ('ciao', 'ciao', 0)")
+
+
 ?>
 
 
