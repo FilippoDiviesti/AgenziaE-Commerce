@@ -50,7 +50,7 @@ if(isset($_POST['login'])){
 require 'db_conn.php';
 $conn = new Essecuelle();
 
-$conn->eseguiQueryNoRis("INSERT INTO utenti (username, password, ruolo) VALUES (:user, :pass, 0)", [':user' => 'prova2', ':pass' => 'prova2'])
+$conn->eseguiQueryNoRis("INSERT INTO utenti (username, password, ruolo) VALUES ('prova2', 'prova2', 0)")
 
 
 ?>
