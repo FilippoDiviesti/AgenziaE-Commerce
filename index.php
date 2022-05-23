@@ -1,3 +1,69 @@
+<?php
+require 'db_conn.php';
+$conn = new Essecuelle();
+if(!isset($_SESSION['loginstate'])){
+    session_start();
+    $_SESSION['loginstate'] = 0;
+}
+if(isset($_POST['login'])){
+    if((isset($_POST['username']) && !empty($_POST['username']) && isset($_POST['password']) && !empty($_POST['password']))){
+        $risultato = $conn->login($_POST['username'],$_POST['password']);
+        if($risultato != 0){
+            $_SESSION['loginstate'] = 1;
+            $pagina = "";
+            switch ($risultato) {
+                case 1:
+                    $pagina = "rappresentante";
+                    break;
+                case 2:
+                    $pagina = "capoarea";
+                    break;
+                case 3:
+                    $pagina = "nazionale";
+                    break;
+                default:
+                    break;
+            }
+            $_SESSION['tipologgato'] = $pagina;
+            header('Location: ../' . $pagina .'/' . $pagina . '.php');
+        }
+        else{
+            $_SESSION['loginstate'] = -1;
+            echo "non valido";
+        }
+    }
+    else{
+        if($_SESSION['loginstate'] == 1){
+            if($_SESSION['tipologgato'] != "")
+                header('Location: ../' . $_SESSION['tipologgato'] .'/' . $_SESSION['tipologgato'] . '.php');
+        }
+        else if($_SESSION['loginstate'] != -1){
+            $message = "assicurarsi di aver riempito tutti i campi correttamente";
+            echo "<script type='text/javascript'>alert('$message');</script>";
+        }
+    }
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +75,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>e-commerce Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -45,37 +111,16 @@
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                                placeholder="Username">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="Password">
                                         </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
-                                        </div>
                                         <a href="dashboardRegione.php" class="btn btn-primary btn-user btn-block">
                                             Login
                                         </a>
-                                        <hr>
-                                        <a href="dashboardRegione.php" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="dashboardRegione.php" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>
                                     </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
