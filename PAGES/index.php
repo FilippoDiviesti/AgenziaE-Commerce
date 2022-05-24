@@ -108,7 +108,7 @@ if(isset($_POST['login'])){
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user">
+                                    <form method="post" class="user">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
@@ -118,7 +118,8 @@ if(isset($_POST['login'])){
                                             <input type="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="Password" name ="password">
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" name="login" value="Login" text="Login">
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" name="login" value="Login"
+											   text="Login">
                                     </form>
                                 </div>
                             </div>
