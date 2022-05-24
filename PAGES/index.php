@@ -8,7 +8,7 @@ if(!isset($_SESSION['loginstate'])){
 }
 if(isset($_POST['login'])){
     if((isset($_POST['username']) && !empty($_POST['username']) && isset($_POST['password']) && !empty($_POST['password']))){
-        $risultato = $conn->eseguiQuery("SELECT compito FROM utenti WHERE username = :user AND password = :pass;", ['user' => $_POST['username'], 'pass' => $_POST['password']]);
+        $risultato = $conn->eseguiQuery("SELECT ruolo FROM utenti WHERE username = :user AND password = :pass;", ['user' => $_POST['username'], 'pass' => $_POST['password']]);
         if($risultato != 0){
             $_SESSION['loginstate'] = 1;
             $pagina = "";
@@ -112,13 +112,13 @@ if(isset($_POST['login'])){
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Username">
+                                                placeholder="Username" name ="username">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" placeholder="Password" name ="password">
                                         </div>
-                                        <a href="dashboardRegione.php" class="btn btn-primary btn-user btn-block">
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" name="login" value="Login">
                                             Login
                                         </a>
                                     </form>
