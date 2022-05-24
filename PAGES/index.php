@@ -1,6 +1,6 @@
 <?php
 
-require 'db_conn.php';
+require '../DB/db_conn.php';
 $conn = new Essecuelle();
 if(!isset($_SESSION['loginstate'])){
     session_start();
@@ -118,9 +118,7 @@ if(isset($_POST['login'])){
                                             <input type="password" class="form-control form-control-user"
                                                 id="exampleInputPassword" placeholder="Password" name ="password">
                                         </div>
-                                        <input type="submit" class="btn btn-primary btn-user btn-block" name="login" value="Login">
-                                            Login
-                                        </a>
+                                        <input type="submit" class="btn btn-primary btn-user btn-block" name="login" value="Login" text="Login">
                                     </form>
                                 </div>
                             </div>
