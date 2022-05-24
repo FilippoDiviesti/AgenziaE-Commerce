@@ -28,8 +28,7 @@ if(isset($_POST['login'])){
         }
         else{
             $_SESSION['loginstate'] = -1;
-            $message = "USERNAME O PASSWORD ERRATI";
-            echo "<script type='text/javascript'>alert('$message');</script>";
+            echo '<div class="alert alert-danger" role="alert">USERNAME O PASSWORD ERRATI</div>';
         }
     }
     else{
@@ -39,7 +38,7 @@ if(isset($_POST['login'])){
         }
         else if($_SESSION['loginstate'] != -1){
             $message = "assicurarsi di aver riempito tutti i campi correttamente";
-            echo "<script type='text/javascript'>alert('$message');</script>";
+            echo '<div class="alert alert-danger" role="alert">ASSICURATI DI AVER RIEMPITO TUTTI I CAMPI</div>';
         }
     }
 }
