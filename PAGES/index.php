@@ -87,7 +87,8 @@ if(isset($_POST['login'])){
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-primary bg" style="height: 100vh;">
+
 
     <div class="container">
 
