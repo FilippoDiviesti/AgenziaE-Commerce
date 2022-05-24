@@ -10,6 +10,8 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+
 :root {
   --blue: #4e73df;
   --indigo: #6610f2;
@@ -64,9 +66,12 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #858796;
+  color: transparent;
   text-align: left;
-  background-color: #fff;
+  background-color: transparent;
+  background-image: url("https://img.freepik.com/free-photo/side-view-homemade-delicious-crispy-potato-chips-inside-outside-brown-pot-dark-background_140725-141000.jpg?w=2000");
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px)
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {

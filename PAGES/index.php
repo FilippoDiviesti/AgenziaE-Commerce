@@ -87,7 +87,15 @@ if(isset($_POST['login'])){
 
 </head>
 
-<body class="bg-gradient-primary bg" style="height: 100vh;background-image: url('https://img.freepik.com/free-photo/side-view-homemade-delicious-crispy-potato-chips-inside-outside-brown-pot-dark-background_140725-141000.jpg?w=2000'); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+<style>
+    #bgimage{
+        height: 100vh;background-image: url('https://img.freepik.com/free-photo/side-view-homemade-delicious-crispy-potato-chips-inside-outside-brown-pot-dark-background_140725-141000.jpg?w=2000');
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+</style>
+
+<body class="bg-gradient-primary" id="bgimage">
 
 
     <div class="container">
