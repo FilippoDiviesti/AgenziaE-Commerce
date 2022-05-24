@@ -24,7 +24,7 @@ if(isset($_POST['login'])){
                     break;
             }
             $_SESSION['tipologgato'] = $risultato["ruolo"];
-            header('Location: ../PAGES/' . $pagina . '.php');
+            header('Location:' . $pagina . '.php');
         }
         else{
             $_SESSION['loginstate'] = -1;
