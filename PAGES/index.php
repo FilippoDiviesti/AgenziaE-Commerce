@@ -12,25 +12,24 @@ if(isset($_POST['login'])){
         if($risultato != 0){
             $_SESSION['loginstate'] = 1;
             $pagina = "";
-            switch ($risultato) {
+            switch ($risultato["ruolo"]) {
                 case 1:
-                    $pagina = "rappresentante";
+                    $pagina = "dashboardRegione";
                     break;
                 case 2:
-                    $pagina = "capoarea";
+                    $pagina = "capoRegioneDashboard";
                     break;
                 case 3:
-                    $pagina = "nazionale";
-                    break;
-                default:
+                    $pagina = "referenteNazionaleDashboard";
                     break;
             }
-            $_SESSION['tipologgato'] = $pagina;
-            header('Location: ../' . $pagina .'/' . $pagina . '.php');
+            $_SESSION['tipologgato'] = $risultato["ruolo"];
+            header('Location: ../PAGES/' . $pagina . '.php');
         }
         else{
             $_SESSION['loginstate'] = -1;
-            echo "non valido";
+            $message = "USERNAME O PASSWORD ERRATI";
+            echo "<script type='text/javascript'>alert('$message');</script>";
         }
     }
     else{
