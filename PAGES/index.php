@@ -28,7 +28,7 @@ if(isset($_POST['login'])){
         }
         else{
             $_SESSION['loginstate'] = -1;
-            echo '<div style="text-align: center; margin-left: 25%; margin-right: 25%; margin-top: 15px;" class="alert alert-danger" role="alert">USERNAME O PASSWORD ERRATI</div>';
+            echo '<div style="text-align: center; margin-left: 25%; margin-right: 25%;" class="alert alert-danger" role="alert">USERNAME O PASSWORD ERRATI</div>';
         }
     }
     else{
@@ -38,7 +38,7 @@ if(isset($_POST['login'])){
         }
         else if($_SESSION['loginstate'] != -1){
             $message = "assicurarsi di aver riempito tutti i campi correttamente";
-            echo '<div style="text-align: center; margin-left: 25%; margin-right: 25%; margin-top: 15px;" class="alert alert-danger" role="alert">ASSICURATI DI AVER RIEMPITO TUTTI I CAMPI</div>';
+            echo '<div style="text-align: center; margin-left: 25%; margin-right: 25%;" class="alert alert-danger" role="alert">ASSICURATI DI AVER RIEMPITO TUTTI I CAMPI</div>';
         }
     }
 }
