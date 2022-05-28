@@ -31,7 +31,7 @@ class Essecuelle{
             try{
                 $esecuzioneQuery = $this->connection->prepare($query);
                 $esecuzioneQuery->execute($params);
-                $risultato = $esecuzioneQuery->fetch(PDO::FETCH_ASSOC);
+                $risultato = $esecuzioneQuery->fetchAll(PDO::FETCH_ASSOC);
                 return $risultato;
             }catch (Exception $e){
                 return 0;
