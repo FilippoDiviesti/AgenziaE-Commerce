@@ -9,10 +9,10 @@ if(!isset($_SESSION['loginstate'])){
 if(isset($_POST['login'])){
     if((isset($_POST['username']) && !empty($_POST['username']) && isset($_POST['password']) && !empty($_POST['password']))){
         $risultato = $conn->eseguiQuery("SELECT * FROM utenti WHERE username = :user AND password = :pass;", ['user' => $_POST['username'], 'pass' => $_POST['password']]);
-        if($risultato != 0){
+        if($risultato[0] != 0){
             $_SESSION['loginstate'] = 1;
             $pagina = "";
-            switch ($risultato["ruolo"]) {
+            switch ($risultato[0]["ruolo"]) {
                 case 1:
                     $pagina = "dashboardRegione";
                     break;
@@ -23,7 +23,7 @@ if(isset($_POST['login'])){
                     $pagina = "referenteNazionaleDashboard";
                     break;
             }
-            $_SESSION['tipologgato'] = $risultato["username"];
+            $_SESSION['tipologgato'] = $risultato[0]["username"];
             header('Location:' . $pagina . '.php');
         }
         else{
