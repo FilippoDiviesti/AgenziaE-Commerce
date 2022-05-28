@@ -36,14 +36,8 @@ session_start();
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboardRegione.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
                 <div class="sidebar-brand-text mx-3">
-                    Regione:
-                    <?php
-                        echo $_SESSION['tipologgato'];
-                    ?>
+                    <img src="img/RMFcommerce.png" style="width: 55%; height: 55%;">
                 </div>
             </a>
 
@@ -53,7 +47,6 @@ session_start();
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="dashboardRegione.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
 
@@ -62,7 +55,6 @@ session_start();
             <!-- Nav Item - CreaOrdine -->
             <li class="nav-item active">
                 <a class="nav-link" href="dashboardRegione.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Crea Ordine</span></a>
             </li>
 
@@ -71,7 +63,6 @@ session_start();
             <!-- Nav Item - Catalogo -->
             <li class="nav-item active">
                 <a class="nav-link" href="dashboardRegione.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Catalogo</span></a>
             </li>
 
