@@ -180,12 +180,42 @@ $conn = new Essecuelle();
                     </div>
                     -->
 
+
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
                     <?php
                         $ris = $conn->eseguiQuery("SELECT * FROM catalogo INNER JOIN prodotti ON catalogo.prodotto = prodotti.nome", []);
                         foreach ($ris as $i) {
-                            echo '<div class="col" style="padding-bottom: 40px;"> <div class="card h-100"> <img src="'.$i["url"] . '" class="card-img-top"> <div class="card-body"> <h5 class="card-title">'.$i["nome"].'</h5> <p class="card-text">'.$i["descrizione"].'</p> </div> <div class="card-footer">  <button style="float: right" class="btn btn-primary">Acquista</button> <p style="float: left; font-size: large; padding-top: 5%">'.$i["prezzo"].'€</p> </div> </div> </div>';
+                            echo '<div class="col" style="padding-bottom: 40px;">
+                                    <div class="card h-100">
+                                        <img src="'.$i["url"] . '" class="card-img-top">
+                                         <div class="card-body">
+                                            <h5 class="card-title">'.$i["nome"].'</h5>
+                                             <p class="card-text">'.$i["descrizione"].'</p>
+                                              <p style=" font-size: large; padding-top: 5%"> Quantità: '.$i["quantita"].'</p><br>
+                                              <p style=" font-weight: bold; font-size: large; padding-top: 5%">'.$i["prezzo"].'€</p>
+                                         </div> 
+                                        <div class="card-footer">
+                                            <form method="post">
+                                                <button name="c" type="submit" style="float: center;" class="btn btn-primary" value="'.$i["nome"].'">Ordina</button>
+                                            </form>
+                                        </div>
+                                    </div> 
+                                 </div>';
+                        }
+
+                        if (isset($_POST['c'])){
+                            $prodotto = $_POST['c'];
+                            $_SESSION['prodotto'] = $prodotto;
+                            echo '<script type="text/javascript">
+                                    $(document).ready(function(){
+                                           $("#OrdineModal").modal("show");
+                                    });
+                                </script>';
+
                         }
                     ?>
+
 
 
                 </div>
@@ -251,8 +281,8 @@ $conn = new Essecuelle();
 
 
 
-<!-- CreaOrdine Modal-->
-<div class="modal fade" id="creaOrdineModal" tabindex="-1" role="dialog" aria-labelledby="Crea Ordine"
+<!-- Ordine Modal-->
+<div class="modal fade" id="OrdineModal" tabindex="-1" role="dialog" aria-labelledby="Crea Ordine"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -264,24 +294,54 @@ $conn = new Essecuelle();
             </div>
             <div class="modal-body">
 
-                <form>
+                <?php
+                    echo "PRODOTTO : " . $prodotto;
+
+                    if (isset($_POST['ordina'])){
+                        //echo "<script>alert('" .$_POST['quantita']."')</script>";
+
+                        if (!empty($_POST['quantita'])){
+                            if ($_POST['quantita']<1){
+                                echo "<script>alert('INSERIRE UNA QUANTITÀ MAGGIORE DI 0')</script>";
+                            }
+                            else{
+                                $quantitadisp = $conn->eseguiQuery("SELECT quantita FROM catalogo WHERE catalogo.prodotto = :prodotto;", ['prodotto' => $_SESSION['prodotto']]);
+                                if ($_POST['quantita'] > $quantitadisp[0]['quantita']){
+                                    echo "<script>alert('PRODOTTO INSUFFICENTE')</script>";
+                                }
+                                else{
+                                    $costoprodotto = $conn->eseguiQuery("SELECT prezzo FROM prodotti WHERE nome = :prodotto", ['prodotto'=>$_SESSION['prodotto']])[0]['prezzo'];
+                                    $costotot = $costoprodotto * $_POST['quantita'];
+                                    $conn->eseguiQueryNoRis("INSERT INTO ordini (prodotto, quantita, data, costo, utente) VALUES (:prodotto, :quantita, :dataoggi, :costo, :user);", ['prodotto' => $_SESSION['prodotto'],'quantita' => $_POST['quantita'], 'dataoggi' => date("y-m-d"), "costo" => $costotot, 'user' => $_SESSION['tipologgato']]);
+                                    $nuovaquantita = $quantitadisp[0]['quantita'] - $_POST['quantita'];
+                                    $conn->eseguiQueryNoRis("UPDATE catalogo SET quantita = :nq WHERE prodotto = :prodotto;", ['nq' => $nuovaquantita, 'prodotto' => $_SESSION['prodotto']]);
+                                    echo "<script>alert('ORDINAZIONE CONFERMATA');</script>";
+                                    echo '<meta http-equiv="refresh" content="1">';
+                                }
+                            }
+                        }
+                        else{
+                            echo "<script>alert('QUANTITÀ NON INSERITA')</script>";
+                        }
+                    }
+
+                ?>
+
+                <form method="post">
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Recipient:</label>
-                        <input type="text" class="form-control" id="recipient-name">
+                        <label for="recipient-name" class="col-form-label">Quantità:</label>
+                        <input placeholder="0" type="number" class="form-control" id="recipient-name" name="quantita">
                     </div>
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-primary" name="ordina">Ordina</button>
+
                     </div>
                 </form>
-
-            </div>
-            <div class="modal-footer">
-
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="index.php?logout=true">Crea</a>
-
-            </div>
         </div>
     </div>
 </div>
