@@ -281,6 +281,9 @@ $conn = new Essecuelle();
                                         $nuovaquantita = $i['quantitadisponibile'] - $i['quantitarichiestadisponibile'];
                                         $conn->eseguiQueryNoRis("UPDATE catalogo SET quantita = :nq WHERE prodotto = :prodotto;", ['nq' => $nuovaquantita, 'prodotto' => $i['prodotto']]);
                                         $conn->eseguiQueryNoRis("UPDATE ordini SET ordini.confermato=true WHERE ordini.id_ordine=:ordine", ['ordine'=>$i['id_ordine']]);
+                                        if ($nuovaquantita == 0){
+                                            $conn->eseguiQueryNoRis("DELETE FROM catalogo WHERE catalogo.quantita = 0", []);
+                                        }
                                     }
                                 }
                                 if($ok == 1){
