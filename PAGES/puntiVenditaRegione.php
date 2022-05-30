@@ -16,13 +16,13 @@ $conn = new Essecuelle();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Regione - Catalogo</title>
+    <title>Regione - PuntiVendita</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
@@ -174,72 +174,48 @@ $conn = new Essecuelle();
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Catalogo</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Punti Vendita</h1>
                 </div>
 
 
-                <!-- CARDS START -->
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">TABELLA ORDINI</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>NOME</th>
+                                    <th>INDIRIZZO</th>
+                                </tr>
+                                </thead>
 
-                <div class="row row-cols-1 row-cols-md-5 g-4">
+                                <tbody>
+                                <!--
+                                <tr>
+                                    <td>Tiger Nixon</td>
+                                    <td>System Architect</td>
+                                    <td>Edinburgh</td>
+                                    <td>61</td>
+                                    <td>2011/04/25</td>
+                                </tr>
+                                -->
 
-                    <!--
-                    <div class="col" style="padding-bottom: 40px;">
-                        <div class="card h-100">
-                            <img src="" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            </div>
-                            <div class="card-footer">
-                                <p>500$</p>
-                                <button class="btn btn-primary">Acquista</button>
-                            </div>
+                                <?php
+                                $ris = $conn->eseguiQuery("SELECT punti_vendita.nome_punto,punti_vendita.indirizzo FROM punti_vendita WHERE punti_vendita.regione=:user;", ['user' => $_SESSION['tipologgato']]);
+                                foreach ($ris as $i) {
+                                    echo "<tr>"."<td>".$i["nome_punto"]."</td>"."<td>".$i["indirizzo"]."</td></tr>";
+                                }
+                                ?>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    -->
-
-
-                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-                    <?php
-                        $ris = $conn->eseguiQuery("SELECT * FROM catalogo INNER JOIN prodotti ON catalogo.prodotto = prodotti.nome", []);
-                        foreach ($ris as $i) {
-                            echo '<div class="col" style="padding-bottom: 40px;">
-                                    <div class="card h-100">
-                                        <img src="'.$i["url"] . '" class="card-img-top">
-                                         <div class="card-body">
-                                            <h5 class="card-title">'.$i["nome"].'</h5>
-                                             <p class="card-text">'.$i["descrizione"].'</p>
-                                              <p style=" font-size: large; padding-top: 5%"> Quantità: '.$i["quantita"].'</p><br>
-                                              <p style=" font-weight: bold; font-size: large; padding-top: 5%">'.$i["prezzo"].'€</p>
-                                         </div> 
-                                        <div class="card-footer">
-                                            <form method="post">
-                                                <button name="c" type="submit" style="float: center;" class="btn btn-primary" value="'.$i["nome"].'">Aggiungi al carrello</button>
-                                            </form>
-                                        </div>
-                                    </div> 
-                                 </div>';
-                        }
-
-                        if (isset($_POST['c'])){
-                            $prodotto = $_POST['c'];
-                            $_SESSION['prodotto'] = $prodotto;
-                            echo '<script type="text/javascript">
-                                    $(document).ready(function(){
-                                           $("#OrdineModal").modal("show");
-                                    });
-                                </script>';
-
-                        }
-                    ?>
-
-
-
                 </div>
-
-                <!-- CARDS END -->
-
             </div>
             <!-- /.container-fluid -->
 
@@ -299,8 +275,8 @@ $conn = new Essecuelle();
 
 
 
-<!-- Ordine Modal-->
-<div class="modal fade" id="OrdineModal" tabindex="-1" role="dialog" aria-labelledby="Crea Ordine"
+<!-- CreaOrdine Modal-->
+<div class="modal fade" id="creaOrdineModal" tabindex="-1" role="dialog" aria-labelledby="Crea Ordine"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -312,54 +288,24 @@ $conn = new Essecuelle();
             </div>
             <div class="modal-body">
 
-                <?php
-                    echo "PRODOTTO : " . $prodotto;
-
-                    if (isset($_POST['ordina'])){
-                        //echo "<script>alert('" .$_POST['quantita']."')</script>";
-
-                        if (!empty($_POST['quantita'])){
-                            if ($_POST['quantita']<1){
-                                echo "<script>alert('INSERIRE UNA QUANTITÀ MAGGIORE DI 0')</script>";
-                            }
-                            else{
-                                $quantitadisp = $conn->eseguiQuery("SELECT quantita FROM catalogo WHERE catalogo.prodotto = :prodotto;", ['prodotto' => $_SESSION['prodotto']]);
-                                if ($_POST['quantita'] > $quantitadisp[0]['quantita']){
-                                    echo "<script>alert('PRODOTTO INSUFFICENTE')</script>";
-                                }
-                                else{
-                                    $costoprodotto = $conn->eseguiQuery("SELECT prezzo FROM prodotti WHERE nome = :prodotto", ['prodotto'=>$_SESSION['prodotto']])[0]['prezzo'];
-                                    $costotot = $costoprodotto * $_POST['quantita'];
-                                    $conn->eseguiQueryNoRis("INSERT INTO ordini (prodotto, quantita, data, costo, utente) VALUES (:prodotto, :quantita, :dataoggi, :costo, :user);", ['prodotto' => $_SESSION['prodotto'],'quantita' => $_POST['quantita'], 'dataoggi' => date("y-m-d"), "costo" => $costotot, 'user' => $_SESSION['tipologgato']]);
-                                    //$nuovaquantita = $quantitadisp[0]['quantita'] - $_POST['quantita'];
-                                    //$conn->eseguiQueryNoRis("UPDATE catalogo SET quantita = :nq WHERE prodotto = :prodotto;", ['nq' => $nuovaquantita, 'prodotto' => $_SESSION['prodotto']]);
-                                    echo "<script>alert('PRODOTTO AGGIUNTO AL CARRELLO');</script>";
-                                    echo '<meta http-equiv="refresh" content="1">';
-                                }
-                            }
-                        }
-                        else{
-                            echo "<script>alert('QUANTITÀ NON INSERITA')</script>";
-                        }
-                    }
-
-                ?>
-
-                <form method="post">
+                <form>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Quantità:</label>
-                        <input placeholder="0" type="number" class="form-control" id="recipient-name" name="quantita">
+                        <label for="recipient-name" class="col-form-label">Recipient:</label>
+                        <input type="text" class="form-control" id="recipient-name">
                     </div>
-
-
-                    </div>
-                    <div class="modal-footer">
-
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary" name="ordina">Aggiungi al carrello</button>
-
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Message:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
                     </div>
                 </form>
+
+            </div>
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="index.php?logout=true">Crea</a>
+
+            </div>
         </div>
     </div>
 </div>

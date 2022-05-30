@@ -71,7 +71,25 @@ $conn = new Essecuelle();
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Catalogo -->
+            <li class="nav-item active">
+                <a class="nav-link" href="carrelloRegione.php">
+                    <span>Carrello</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Catalogo -->
+            <li class="nav-item active">
+                <a class="nav-link" href="puntiVenditaRegione.php">
+                    <span>Punti Vendita</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
         </ul>
         <!-- End of Sidebar -->
@@ -173,7 +191,7 @@ $conn = new Essecuelle();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
 
                                                 <?php
-                                                $ris = $conn->eseguiQuery("SELECT count(*) as conteggio FROM ordini WHERE ordini.utente = :user", ['user' => $_SESSION['tipologgato']]);
+                                                $ris = $conn->eseguiQuery("SELECT count(*) as conteggio FROM ordini WHERE ordini.utente = :user AND ordini.confermato;", ['user' => $_SESSION['tipologgato']]);
                                                 echo $ris[0]["conteggio"];
                                                 ?>
 
@@ -198,8 +216,13 @@ $conn = new Essecuelle();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
 
                                                 <?php
-                                                $ris = $conn->eseguiQuery("SELECT sum(ordini.costo) as spese_totali FROM ordini WHERE ordini.utente = :user", ['user' => $_SESSION['tipologgato']]);
-                                                echo $ris[0]["spese_totali"] . "€";
+                                                $ris = $conn->eseguiQuery("SELECT sum(ordini.costo) as spese_totali FROM ordini WHERE ordini.utente = :user AND ordini.confermato;", ['user' => $_SESSION['tipologgato']]);
+                                                if(empty($ris[0]['spese_totali'])){
+                                                    echo "0€";
+                                                }
+                                                else{
+                                                    echo $ris[0]["spese_totali"] . "€";
+                                                }
                                                 ?>
 
                                             </div>
@@ -223,8 +246,13 @@ $conn = new Essecuelle();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
 
                                                 <?php
-                                                $ris = $conn->eseguiQuery("SELECT sum(ordini.quantita) as pezzi_totali FROM ordini WHERE ordini.utente = :user", ['user' => $_SESSION['tipologgato']]);
-                                                echo $ris[0]["pezzi_totali"];
+                                                $ris = $conn->eseguiQuery("SELECT sum(ordini.quantita) as pezzi_totali FROM ordini WHERE ordini.utente = :user AND ordini.confermato;", ['user' => $_SESSION['tipologgato']]);
+                                                if(empty($ris[0]["pezzi_totali"])){
+                                                    echo "0";
+                                                }
+                                                else{
+                                                    echo $ris[0]["pezzi_totali"];
+                                                }
                                                 ?>
 
                                             </div>
@@ -250,8 +278,13 @@ $conn = new Essecuelle();
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
 
                                                 <?php
-                                                $ris = $conn->eseguiQuery("SELECT ordini.prodotto FROM ordini WHERE ordini.utente = :user GROUP BY ordini.prodotto HAVING SUM(ordini.quantita) = (SELECT MAX(tab1.cont) FROM (SELECT SUM(ordini.quantita) AS cont FROM ordini WHERE ordini.utente = :user GROUP BY ordini.prodotto) as tab1);", ['user' => $_SESSION['tipologgato']]);
-                                                echo $ris[0]["prodotto"];
+                                                $ris = $conn->eseguiQuery("SELECT ordini.prodotto FROM ordini WHERE ordini.utente = :user AND ordini.confermato GROUP BY ordini.prodotto HAVING SUM(ordini.quantita) = (SELECT MAX(tab1.cont) FROM (SELECT SUM(ordini.quantita) AS cont FROM ordini WHERE ordini.utente = :user AND ordini.confermato GROUP BY ordini.prodotto) as tab1);", ['user' => $_SESSION['tipologgato']]);
+                                                if (empty($ris[0]['prodotto'])){
+                                                    echo "X";
+                                                }
+                                                else{
+                                                    echo $ris[0]['prodotto'];
+                                                }
                                                 ?>
 
                                             </div>
@@ -299,7 +332,7 @@ $conn = new Essecuelle();
                                         -->
 
                                         <?php
-                                        $ris = $conn->eseguiQuery("SELECT ordini.id_ordine, ordini.prodotto, ordini.quantita, ordini.data, ordini.costo FROM ordini WHERE ordini.utente = :user ", ['user' => $_SESSION['tipologgato']]);
+                                        $ris = $conn->eseguiQuery("SELECT ordini.id_ordine, ordini.prodotto, ordini.quantita, ordini.data, ordini.costo FROM ordini WHERE ordini.utente = :user AND ordini.confermato;", ['user' => $_SESSION['tipologgato']]);
                                         foreach ($ris as $i) {
                                             echo "<tr>"."<td>".$i["id_ordine"]."</td>"."<td>".$i["prodotto"]."</td>"."<td>".$i["quantita"]."</td>"."<td>".$i["data"]."</td>"."<td>".$i["costo"]."€"."</td>"."</tr>";
                                         }

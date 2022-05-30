@@ -16,13 +16,13 @@ $conn = new Essecuelle();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Regione - Catalogo</title>
+    <title>Regione - Carrello</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
@@ -174,7 +174,7 @@ $conn = new Essecuelle();
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Catalogo</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Carrello</h1>
                 </div>
 
 
@@ -202,36 +202,37 @@ $conn = new Essecuelle();
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
                     <?php
-                        $ris = $conn->eseguiQuery("SELECT * FROM catalogo INNER JOIN prodotti ON catalogo.prodotto = prodotti.nome", []);
-                        foreach ($ris as $i) {
-                            echo '<div class="col" style="padding-bottom: 40px;">
+                    $ris = $conn->eseguiQuery("SELECT ordini.id_ordine, prodotti.nome, prodotti.url, prodotti.descrizione, ordini.quantita, ordini.data, ordini.costo FROM ordini INNER JOIN prodotti ON ordini.prodotto=prodotti.nome WHERE NOT ordini.confermato AND ordini.utente=:user", ['user' => $_SESSION['tipologgato']]);
+                    foreach ($ris as $i) {
+                        echo '<div class="col" style="padding-bottom: 40px;">
                                     <div class="card h-100">
                                         <img src="'.$i["url"] . '" class="card-img-top">
                                          <div class="card-body">
                                             <h5 class="card-title">'.$i["nome"].'</h5>
                                              <p class="card-text">'.$i["descrizione"].'</p>
                                               <p style=" font-size: large; padding-top: 5%"> Quantità: '.$i["quantita"].'</p><br>
-                                              <p style=" font-weight: bold; font-size: large; padding-top: 5%">'.$i["prezzo"].'€</p>
+                                              <p style=" font-weight: bold; font-size: large; padding-top: 5%">'.$i["costo"].'€</p>
                                          </div> 
                                         <div class="card-footer">
                                             <form method="post">
-                                                <button name="c" type="submit" style="float: center;" class="btn btn-primary" value="'.$i["nome"].'">Aggiungi al carrello</button>
+                                                <button name="c" type="submit" style="float: center;" value="'.$i["id_ordine"].'" class="btn btn-danger btn-icon-split">
+                                                    <span class="icon text-white-50">
+                                                    <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text">Rimuovi</span>
+                                                </button>
                                             </form>
                                         </div>
                                     </div> 
                                  </div>';
-                        }
+                    }
 
-                        if (isset($_POST['c'])){
-                            $prodotto = $_POST['c'];
-                            $_SESSION['prodotto'] = $prodotto;
-                            echo '<script type="text/javascript">
-                                    $(document).ready(function(){
-                                           $("#OrdineModal").modal("show");
-                                    });
-                                </script>';
-
-                        }
+                    if (isset($_POST['c'])){
+                        $ordine = $_POST['c'];
+                        $conn->eseguiQueryNoRis("DELETE FROM `ordini` WHERE `ordini`.`id_ordine` = :ordine;", ['ordine'=>$ordine]);
+                        echo "<script>alert('PRODOTTO RIMOSSO DAL CARRELLO');</script>";
+                        echo '<meta http-equiv="refresh" content="0">';
+                    }
                     ?>
 
 
@@ -246,6 +247,55 @@ $conn = new Essecuelle();
         </div>
         <!-- End of Main Content -->
 
+        <footer class="sticky-footer bg-gray-200">
+            <div class="container my-auto">
+                <div class="copyright text-right my-auto">
+                    <p style="font-size: x-large; float: left;">Costo Totale : <?php
+                        $ris = $conn->eseguiQuery("SELECT SUM(ordini.costo) as totale FROM ordini WHERE NOT ordini.confermato AND ordini.utente=:user;", ['user' => $_SESSION['tipologgato']]);
+                        if (empty($ris[0]['totale'])){
+                            echo "0€";
+                        }
+                        else{
+                            echo $ris[0]['totale'] . "€";
+                        }
+                        ?></p>
+
+
+
+                    <?php
+                        if (isset($_POST['ordina'])){
+                            $numprodotti = $conn->eseguiQuery("SELECT count(*) as numero FROM ordini WHERE NOT ordini.confermato AND ordini.utente=:user ;", ['user' => $_SESSION['tipologgato']]);
+                            if ($numprodotti[0]['numero'] == 0){
+                                echo "<script>alert('NESSUN PRODOTTO NEL CARRELLO');</script>";
+                            }
+                            else{
+                                $p = $conn->eseguiQuery("SELECT ordini.id_ordine,ordini.prodotto,ordini.quantita as quantita_dellordine,catalogo.quantita as quantitadisponibile,tab1.quantita as quantitarichiestadisponibile FROM (ordini LEFT JOIN catalogo on ordini.prodotto=catalogo.prodotto) INNER JOIN ((SELECT ordini.prodotto as prod, SUM(ordini.quantita) as quantita FROM ordini LEFT JOIN catalogo on ordini.prodotto=catalogo.prodotto WHERE NOT ordini.confermato AND ordini.utente=:user GROUP BY ordini.prodotto, catalogo.quantita)as tab1) on tab1.prod = ordini.prodotto WHERE NOT ordini.confermato AND ordini.utente=:user;", ['user' => $_SESSION['tipologgato']]);
+                                $ok = 1;
+                                foreach ($p as $i) {
+                                    if (empty($i['quantitadisponibile']) || $i['quantitarichiestadisponibile'] > $i['quantitadisponibile']){
+                                        echo "<script>alert('IL PRODOTTO " . $i['prodotto'] . " NON É PIÚ DISPONIBILE');</script>";
+                                        $conn->eseguiQueryNoRis("DELETE FROM ordini WHERE ordini.id_ordine=:id;", ['id'=>$i['id_ordine']]);
+                                        $ok = 0;
+                                    }
+                                    else{
+                                        $nuovaquantita = $i['quantitadisponibile'] - $i['quantitarichiestadisponibile'];
+                                        $conn->eseguiQueryNoRis("UPDATE catalogo SET quantita = :nq WHERE prodotto = :prodotto;", ['nq' => $nuovaquantita, 'prodotto' => $i['prodotto']]);
+                                        $conn->eseguiQueryNoRis("UPDATE ordini SET ordini.confermato=true WHERE ordini.id_ordine=:ordine", ['ordine'=>$i['id_ordine']]);
+                                    }
+                                }
+                                if($ok == 1){
+                                    echo "<script>alert('ORDINE EFFETTUATO CON SUCCESSO');</script>";
+                                    echo '<meta http-equiv="refresh" content="1">';
+                                }
+                            }
+                        }
+                    ?>
+                    <form method="post">
+                        <button  type="submit" class="btn btn-primary" name="ordina">Conferma l'ordinazione</button>
+                    </form>
+                </div>
+            </div>
+        </footer>
         <!-- Footer -->
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
@@ -299,70 +349,7 @@ $conn = new Essecuelle();
 
 
 
-<!-- Ordine Modal-->
-<div class="modal fade" id="OrdineModal" tabindex="-1" role="dialog" aria-labelledby="Crea Ordine"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crea un nuovo ordine</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
 
-                <?php
-                    echo "PRODOTTO : " . $prodotto;
-
-                    if (isset($_POST['ordina'])){
-                        //echo "<script>alert('" .$_POST['quantita']."')</script>";
-
-                        if (!empty($_POST['quantita'])){
-                            if ($_POST['quantita']<1){
-                                echo "<script>alert('INSERIRE UNA QUANTITÀ MAGGIORE DI 0')</script>";
-                            }
-                            else{
-                                $quantitadisp = $conn->eseguiQuery("SELECT quantita FROM catalogo WHERE catalogo.prodotto = :prodotto;", ['prodotto' => $_SESSION['prodotto']]);
-                                if ($_POST['quantita'] > $quantitadisp[0]['quantita']){
-                                    echo "<script>alert('PRODOTTO INSUFFICENTE')</script>";
-                                }
-                                else{
-                                    $costoprodotto = $conn->eseguiQuery("SELECT prezzo FROM prodotti WHERE nome = :prodotto", ['prodotto'=>$_SESSION['prodotto']])[0]['prezzo'];
-                                    $costotot = $costoprodotto * $_POST['quantita'];
-                                    $conn->eseguiQueryNoRis("INSERT INTO ordini (prodotto, quantita, data, costo, utente) VALUES (:prodotto, :quantita, :dataoggi, :costo, :user);", ['prodotto' => $_SESSION['prodotto'],'quantita' => $_POST['quantita'], 'dataoggi' => date("y-m-d"), "costo" => $costotot, 'user' => $_SESSION['tipologgato']]);
-                                    //$nuovaquantita = $quantitadisp[0]['quantita'] - $_POST['quantita'];
-                                    //$conn->eseguiQueryNoRis("UPDATE catalogo SET quantita = :nq WHERE prodotto = :prodotto;", ['nq' => $nuovaquantita, 'prodotto' => $_SESSION['prodotto']]);
-                                    echo "<script>alert('PRODOTTO AGGIUNTO AL CARRELLO');</script>";
-                                    echo '<meta http-equiv="refresh" content="1">';
-                                }
-                            }
-                        }
-                        else{
-                            echo "<script>alert('QUANTITÀ NON INSERITA')</script>";
-                        }
-                    }
-
-                ?>
-
-                <form method="post">
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Quantità:</label>
-                        <input placeholder="0" type="number" class="form-control" id="recipient-name" name="quantita">
-                    </div>
-
-
-                    </div>
-                    <div class="modal-footer">
-
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary" name="ordina">Aggiungi al carrello</button>
-
-                    </div>
-                </form>
-        </div>
-    </div>
-</div>
 
 
 
