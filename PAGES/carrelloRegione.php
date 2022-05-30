@@ -284,8 +284,8 @@ $conn = new Essecuelle();
                                     }
                                 }
                                 if($ok == 1){
-                                    echo "<script>alert('ORDINE EFFETTUATO CON SUCCESSO');</script>";
                                     echo '<meta http-equiv="refresh" content="1">';
+                                    echo "<script>alert('ORDINE EFFETTUATO CON SUCCESSO');</script>";
                                 }
                             }
                         }
