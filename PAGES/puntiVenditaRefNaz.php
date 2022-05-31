@@ -37,7 +37,7 @@ $conn = new Essecuelle();
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboardRegione.php">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="referenteNazionaleDashboard.php">
             <div class="sidebar-brand-text mx-3">
                 <img src="img/RMFcommerce.png" style="width: 55%; height: 55%;">
             </div>
@@ -48,7 +48,7 @@ $conn = new Essecuelle();
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-            <a class="nav-link" href="dashboardRegione.php">
+            <a class="nav-link" href="referenteNazionaleDashboard.php">
                 <span>Dashboard</span></a>
         </li>
 
@@ -66,25 +66,17 @@ $conn = new Essecuelle();
 
         <!-- Nav Item - Catalogo -->
         <li class="nav-item active">
-            <a class="nav-link" href="catalogoRegione.php">
+            <a class="nav-link" href="referenteNazionaleCatalogo.php">
                 <span>Catalogo</span></a>
         </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Catalogo -->
-        <li class="nav-item active">
-            <a class="nav-link" href="carrelloRegione.php">
-                <span>Carrello</span></a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Catalogo -->
         <li class="nav-item active">
-            <a class="nav-link" href="puntiVenditaRegione.php">
+            <a class="nav-link" href="puntiVenditaRefNaz.php">
                 <span>Punti Vendita</span></a>
         </li>
 
@@ -172,9 +164,16 @@ $conn = new Essecuelle();
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
-                <!-- Page Heading -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Punti Vendita</h1>
+                <div class="row">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Punti vendita</h1>
+                    </div>
+
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4" style="margin: 0 1% 0 auto;">
+                        <button data-toggle="modal" data-target="#addPunto" style="float: right;" class="btn btn-primary">Aggiungi punto vendita</button>
+                    </div>
+
                 </div>
 
 
@@ -188,6 +187,7 @@ $conn = new Essecuelle();
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
+                                    <th>REGIONE</th>
                                     <th>NOME</th>
                                     <th>INDIRIZZO</th>
                                 </tr>
@@ -205,9 +205,9 @@ $conn = new Essecuelle();
                                 -->
 
                                 <?php
-                                $ris = $conn->eseguiQuery("SELECT punti_vendita.nome_punto,punti_vendita.indirizzo FROM punti_vendita WHERE punti_vendita.regione=:user;", ['user' => $_SESSION['tipologgato']]);
+                                $ris = $conn->eseguiQuery("SELECT punti_vendita.regione,punti_vendita.nome_punto,punti_vendita.indirizzo FROM punti_vendita;", []);
                                 foreach ($ris as $i) {
-                                    echo "<tr>"."<td>".$i["nome_punto"]."</td>"."<td>".$i["indirizzo"]."</td></tr>";
+                                    echo "<tr>"."<td>".$i["regione"]."</td>"."<td>".$i["nome_punto"]."</td>"."<td>".$i["indirizzo"]."</td></tr>";
                                 }
                                 ?>
 
@@ -267,6 +267,101 @@ $conn = new Essecuelle();
                 ?>
                 <a class="btn btn-primary" href="index.php?logout=true">Logout</a>
             </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- AddProdotto Modal-->
+<div class="modal fade" id="addPunto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Aggiunta punto vendita</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <?php
+                if (isset($_POST['aggiungi'])){
+                    if (empty($_POST['regione']) || empty($_POST['nome']) || empty($_POST['indirizzo']) || $_POST['lat'] == "" || $_POST['long'] == ""){
+                        echo "<script>alert('COMPILARE TUTTI I CAMPI');</script>";
+                    }
+                    else{
+                        $conn->eseguiQueryNoRis("INSERT INTO punti_vendita (regione, nome_punto, indirizzo, latitudine, longitudine) VALUES (:r, :n, :i, :lat, :long);", ['r'=>$_POST['regione'], 'n'=>$_POST['nome'], 'i'=>$_POST['indirizzo'], 'lat'=>$_POST['lat'], 'long'=>$_POST['long']]);
+                        echo "<script>alert('PUNTO VENDITA INSERITO');</script>";
+                        echo '<meta http-equiv="refresh" content="1">';
+                    }
+                }
+                ?>
+
+                <form method="post">
+                    <div class="form-group">
+                        <select class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Regione" name ="regione">
+                            <option value="abruzzo">Abruzzo</option>
+                            <option value="basilicata">Basilicata</option>
+                            <option value="calabria">Calabria</option>
+                            <option value="campania">Campania</option>
+                            <option value="emilia">Emilia Romagna</option>
+                            <option value="friuli">Friuli Venezia Giulia</option>
+                            <option value="lazio">Lazio</option>
+                            <option value="liguria">Liguria</option>
+                            <option value="lombardia">Lombardia</option>
+                            <option value="marche">Marche</option>
+                            <option value="molise">Molise</option>
+                            <option value="piemonte">Piemonte</option>
+                            <option value="puglia">Puglia</option>
+                            <option value="sardegna">Sardegna</option>
+                            <option value="sicilia">Sicilia</option>
+                            <option value="toscana">Toscana</option>
+                            <option value="trentino">Trentino Alto Adige</option>
+                            <option value="umbria">Umbria</option>
+                            <option value="valledaosta">Valle D'Aosta</option>
+                            <option value="veneto">Veneto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user"
+                               id="exampleInputEmail" aria-describedby="emailHelp"
+                               placeholder="Nome" name ="nome" >
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user"
+                               id="exampleInputEmail" aria-describedby="emailHelp"
+                               placeholder="Indirizzo" name ="indirizzo">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-user"
+                               id="exampleInputEmail" aria-describedby="emailHelp"
+                               placeholder="Latitudine" name ="lat" step="0.00001">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-user"
+                               id="exampleInputEmail" aria-describedby="emailHelp"
+                               placeholder="Longitudine" name ="long" step="0.00001">
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button type="submit" name="aggiungi" class="btn btn-primary" href="index.php?logout=true">Aggiungi</button>
+                    </div>
+
+                </form>
+
+
+
+            </div>
+
         </div>
     </div>
 </div>
