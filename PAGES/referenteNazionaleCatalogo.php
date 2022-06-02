@@ -210,7 +210,10 @@ $conn = new Essecuelle();
                         }
                         echo '<div class="col" style="padding-bottom: 40px;">
                                     <div class="card h-100">
-                                        <img src="'.$i["url"] . '" class="card-img-top">
+                                        <div style="height: 230px; width: auto; background-size: contain;background-repeat: no-repeat;background-position: center; no-repeat; background-image: url('.$i["url"].')">
+                                        <!--<img src="'.$i["url"] . '" class="card-img-top">-->
+                                        </div>
+                                        <hr class="sidebar-divider my-0">
                                          <div class="card-body">
                                             <h5 class="card-title">'.$i["nome"].'</h5>
                                              <p class="card-text">'.$i["descrizione"].'</p>
