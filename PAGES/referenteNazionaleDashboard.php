@@ -1,7 +1,15 @@
 <?php
 session_start();
+if(!isset($_SESSION['loginstate'])){
+    header('Location: index.php');
+}
+else if($_SESSION['pagina'] != 'referenteNazionaleDashboard'){
+    header('Location: index.php');
+}
+else{
 require '../DB/db_conn.php';
 $conn = new Essecuelle();
+}
 ?>
 
 

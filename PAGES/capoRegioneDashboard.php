@@ -1,11 +1,12 @@
 <?php
+session_start();
 if(!isset($_SESSION['loginstate'])){
     header('Location: index.php');
 }
-else if($_SESSION['pagina'] == 'capoRegioneDashboard'){
+else if($_SESSION['pagina'] != 'capoRegioneDashboard'){
     header('Location: index.php');
-}else{
-session_start();
+}
+else{
 require '../DB/db_conn.php';
 $conn = new Essecuelle();
 $gruppo = $conn->eseguiQuery("SELECT Gruppo FROM utenti WHERE username = :user", ['user' => $_SESSION['tipologgato']])[0]['Gruppo'];
