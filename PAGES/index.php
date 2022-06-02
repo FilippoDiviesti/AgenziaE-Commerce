@@ -23,6 +23,7 @@ if(isset($_POST['login'])){
                     $pagina = "referenteNazionaleDashboard";
                     break;
             }
+            $_SESSION['pagina'] = $pagina; 
             $_SESSION['tipologgato'] = $risultato[0]["username"];
             header('Location:' . $pagina . '.php');
         }
