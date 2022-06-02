@@ -3,7 +3,7 @@ session_start();
 if(!isset($_SESSION['loginstate'])){
     header('Location: index.php');
 }
-else if($_SESSION['pagina'] != 'referenteNazionaleDashboard'){
+else if($_SESSION['pagina'] != 'dashboardRegione'){
     header('Location: index.php');
 }
 else{
